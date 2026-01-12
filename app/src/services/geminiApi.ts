@@ -1,6 +1,6 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { GRID_PROMPT, INDIVIDUAL_PROMPT_TEMPLATE } from '../constants/prompts';
-import { CONCEPTS } from '../constants/concepts';
+import { CONCEPT_DATA } from '../constants/concepts';
 import type { GeneratedImage, GenerationSettings } from '../types';
 
 const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
@@ -100,9 +100,10 @@ export async function generateGrid(
 export async function generateConcept(
   image: File,
   conceptId: number,
-  settings: GenerationSettings
+  settings: GenerationSettings,
+  conceptName?: string
 ): Promise<GeneratedImage> {
-  const concept = CONCEPTS.find((c) => c.id === conceptId);
+  const concept = CONCEPT_DATA.find((c) => c.id === conceptId);
   if (!concept) {
     throw new Error(`Concept with ID ${conceptId} not found`);
   }
@@ -128,13 +129,13 @@ export async function generateConcept(
   const imageData = extractImageFromResponse(result);
 
   if (!imageData) {
-    throw new Error(`Failed to generate ${concept.name}. Please try again.`);
+    throw new Error(`Failed to generate concept. Please try again.`);
   }
 
   return {
     id: crypto.randomUUID(),
     conceptId: concept.id,
-    conceptName: concept.name,
+    conceptName: conceptName || `Concept ${concept.id}`,
     imageData,
     prompt: fullPrompt,
   };

@@ -1,67 +1,78 @@
 import type { Concept } from '../types';
+import type { Translations } from '../i18n/translations';
 
-export const CONCEPTS: Concept[] = [
+type ConceptKey = 'heroStillLife' | 'macroDetail' | 'dynamicInteraction' | 'sculpturalMinimal' | 'floatingElements' | 'sensoryCloseup' | 'colorConcept' | 'abstractEssence' | 'surrealFusion';
+
+interface ConceptData {
+  id: number;
+  key: ConceptKey;
+  icon: string;
+  prompt: string;
+}
+
+export const CONCEPT_DATA: ConceptData[] = [
   {
     id: 1,
-    name: 'Hero Still Life',
-    description: 'Bold, iconic composition with striking visual impact',
+    key: 'heroStillLife',
     icon: '🎯',
     prompt: 'Iconic hero still life with bold composition',
   },
   {
     id: 2,
-    name: 'Macro Detail',
-    description: 'Extreme close-up highlighting texture and material',
+    key: 'macroDetail',
     icon: '🔍',
     prompt: 'Extreme macro detail highlighting material, surface, or texture',
   },
   {
     id: 3,
-    name: 'Dynamic Interaction',
-    description: 'Liquid or particle effects surrounding the product',
+    key: 'dynamicInteraction',
     icon: '💫',
     prompt: 'Dynamic liquid or particle interaction surrounding the product',
   },
   {
     id: 4,
-    name: 'Sculptural Minimal',
-    description: 'Clean arrangement with abstract geometric forms',
+    key: 'sculpturalMinimal',
     icon: '🔷',
     prompt: 'Minimal sculptural arrangement with abstract forms',
   },
   {
     id: 5,
-    name: 'Floating Elements',
-    description: 'Weightless composition suggesting innovation',
+    key: 'floatingElements',
     icon: '☁️',
     prompt: 'Floating elements composition suggesting lightness and innovation',
   },
   {
     id: 6,
-    name: 'Sensory Close-up',
-    description: 'Tactile realism emphasizing touch and feel',
+    key: 'sensoryCloseup',
     icon: '✋',
     prompt: 'Sensory close-up emphasizing tactility and realism',
   },
   {
     id: 7,
-    name: 'Color Concept',
-    description: 'Scene driven by the product color palette',
+    key: 'colorConcept',
     icon: '🎨',
     prompt: 'Color-driven conceptual scene inspired by the product palette',
   },
   {
     id: 8,
-    name: 'Abstract Essence',
-    description: 'Symbolic ingredient or component visualization',
+    key: 'abstractEssence',
     icon: '✨',
     prompt: 'Ingredient or component abstraction (non-literal, symbolic)',
   },
   {
     id: 9,
-    name: 'Surreal Fusion',
-    description: 'Elegant blend of realism and imagination',
+    key: 'surrealFusion',
     icon: '🌙',
     prompt: 'Surreal yet elegant fusion scene combining realism and imagination',
   },
 ];
+
+export function getConcepts(t: Translations): Concept[] {
+  return CONCEPT_DATA.map(({ id, key, icon, prompt }) => ({
+    id,
+    name: t.stepConceptSelect.concepts[key].name,
+    description: t.stepConceptSelect.concepts[key].description,
+    icon,
+    prompt,
+  }));
+}

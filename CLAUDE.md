@@ -42,12 +42,44 @@ The app implements a 4-step wizard: **Upload → Flow Select → Configure → R
 ### Generation Flows
 Three distinct flows handled by `useGemini` hook:
 1. **Grid**: Generates 3x3 grid image with all 9 concepts
-2. **Individual**: Generates selected concepts one-by-one (uses `CONCEPTS` from `constants/concepts.ts`)
+2. **Individual**: Generates selected concepts one-by-one (uses `getConcepts()` from `constants/concepts.ts`)
 3. **Custom**: User writes their own prompt (optionally optimized via `promptOptimizer` service)
 
 ### Services
 - `geminiApi.ts`: Direct Gemini API integration (generateGrid, generateConcept, generateCustom)
 - `promptOptimizer.ts`: Uses Gemini 2.0 Flash to enhance user prompts
+
+### Localization (i18n)
+The app supports **Hungarian (default)** and **English**. Language preference is persisted in localStorage.
+
+**Architecture:**
+- `src/i18n/translations.ts` - All UI strings for both languages, strongly typed
+- `src/i18n/LanguageContext.tsx` - React Context providing `language`, `setLanguage`, and `t` (translations object)
+- Language selector in TopBar (HU/EN toggle buttons)
+
+**Usage in components:**
+```tsx
+import { useLanguage } from '../../i18n/LanguageContext';
+
+function MyComponent() {
+  const { t } = useLanguage();
+  return <h1>{t.stepUpload.title}</h1>;
+}
+```
+
+**Adding new translations:**
+1. Add keys to the `Translations` interface in `translations.ts`
+2. Add Hungarian text in `translations.hu`
+3. Add English text in `translations.en`
+
+**Concepts localization:**
+Concept names/descriptions are localized but AI prompts stay in English (for optimal generation). Use `getConcepts(t)` to get localized concepts:
+```tsx
+import { getConcepts } from '../../constants/concepts';
+const concepts = getConcepts(t); // Returns Concept[] with localized name/description
+```
+
+The raw `CONCEPT_DATA` array (English prompts only) is used by `geminiApi.ts` for generation.
 
 ### Component Organization
 ```
@@ -64,9 +96,11 @@ components/
 | `src/hooks/useWizard.tsx` | Central state management (Context + Reducer) |
 | `src/hooks/useGemini.ts` | Image generation orchestration |
 | `src/services/geminiApi.ts` | Gemini API calls |
-| `src/constants/concepts.ts` | 9 pre-defined creative concepts with prompts |
+| `src/constants/concepts.ts` | 9 creative concepts (`CONCEPT_DATA` + `getConcepts()` for i18n) |
 | `src/constants/prompts.ts` | Grid generation prompt template |
 | `src/types/index.ts` | All TypeScript types |
+| `src/i18n/translations.ts` | All UI strings (Hungarian + English) |
+| `src/i18n/LanguageContext.tsx` | Language state management Context |
 
 ## Key Types
 
@@ -76,6 +110,7 @@ type WizardStep = 'upload' | 'flow' | 'configure' | 'results'
 type AspectRatio = 'auto' | '1:1' | '3:4' | '4:3' | '16:9' | '9:16'
 type Resolution = '1k' | '2k' | '4k'
 type VariationCount = 1 | 2
+type Language = 'hu' | 'en'  // Hungarian (default) | English
 ```
 
 ## Design Reference

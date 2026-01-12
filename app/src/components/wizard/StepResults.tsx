@@ -1,5 +1,6 @@
 import { useEffect, useCallback, useState, useRef } from 'react';
 import { useWizard } from '../../hooks/useWizard';
+import { useLanguage } from '../../i18n/LanguageContext';
 import { useGemini } from '../../hooks/useGemini';
 import { Button } from '../ui/Button';
 import { Lightbox } from '../ui/Lightbox';
@@ -9,6 +10,7 @@ import styles from './StepResults.module.css';
 
 export function StepResults() {
   const { state, dispatch } = useWizard();
+  const { t } = useLanguage();
   const [selectedImage, setSelectedImage] = useState<GeneratedImage | null>(null);
   const hasStartedRef = useRef(false);
 
@@ -29,6 +31,7 @@ export function StepResults() {
   const { generate, isGenerating, progress } = useGemini({
     onImageGenerated: handleImageGenerated,
     onError: handleError,
+    translations: t,
   });
 
   useEffect(() => {
@@ -96,8 +99,8 @@ export function StepResults() {
     return (
       <div className={styles.container}>
         <div className={styles.header}>
-          <h2>Something went wrong</h2>
-          <p>We couldn't generate your images</p>
+          <h2>{t.stepResults.errorTitle}</h2>
+          <p>{t.stepResults.errorSubtitle}</p>
         </div>
 
         <div className={styles.errorContainer}>
@@ -106,9 +109,9 @@ export function StepResults() {
 
         <FloatingActionBar>
           <Button variant="ghost" onClick={handleBack}>
-            Go Back
+            {t.stepResults.actions.goBack}
           </Button>
-          <Button onClick={handleStartOver}>Start Over</Button>
+          <Button onClick={handleStartOver}>{t.stepResults.actions.startOver}</Button>
         </FloatingActionBar>
       </div>
     );
@@ -118,7 +121,7 @@ export function StepResults() {
     <div className={styles.container}>
       <div className={styles.header}>
         <h2>
-          {isGenerating ? 'Creating Your Creatives' : 'Your Creatives'}
+          {isGenerating ? t.stepResults.title.generating : t.stepResults.title.done}
         </h2>
         <p className={styles.progressText}>
           {isGenerating ? (
@@ -126,17 +129,19 @@ export function StepResults() {
               <span className={styles.progressCount}>{state.generatedImages.length}</span>
               <span className={styles.progressDivider}>/</span>
               <span>{totalExpected}</span>
-              <span className={styles.progressLabel}> images</span>
+              <span className={styles.progressLabel}> {t.stepResults.progress.images}</span>
               {progress.currentConcept && (
                 <span className={styles.currentConcept}>
-                  — Generating {progress.currentConcept}...
+                  — {t.stepResults.progress.generating} {progress.currentConcept}...
                 </span>
               )}
             </>
           ) : (
             <>
-              {state.generatedImages.length} image
-              {state.generatedImages.length !== 1 ? 's' : ''} generated
+              {state.generatedImages.length}{' '}
+              {state.generatedImages.length === 1
+                ? t.stepResults.generated.single
+                : t.stepResults.generated.plural}
             </>
           )}
         </p>
@@ -145,7 +150,7 @@ export function StepResults() {
       {state.error && state.generatedImages.length > 0 && (
         <div className={styles.warningBanner}>
           <span className={styles.warningIcon}>⚠️</span>
-          <span>Some images failed to generate: {state.error}</span>
+          <span>{t.stepResults.warningPrefix} {state.error}</span>
         </div>
       )}
 
@@ -203,22 +208,22 @@ export function StepResults() {
         {!isGenerating && (
           <>
             <Button variant="ghost" onClick={handleBack}>
-              Generate More
+              {t.stepResults.actions.generateMore}
             </Button>
             {state.generatedImages.length > 1 && (
               <Button variant="secondary" onClick={handleDownloadAll}>
-                Download All
+                {t.stepResults.actions.downloadAll}
               </Button>
             )}
             <Button onClick={handleStartOver}>
-              Start Over
+              {t.stepResults.actions.startOver}
             </Button>
           </>
         )}
         {isGenerating && (
           <div className={styles.generatingStatus}>
             <div className={styles.spinner} />
-            <span>Generating...</span>
+            <span>{t.stepResults.generatingStatus}</span>
           </div>
         )}
       </FloatingActionBar>

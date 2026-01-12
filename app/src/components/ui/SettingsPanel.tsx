@@ -1,4 +1,5 @@
 import { useWizard } from '../../hooks/useWizard';
+import { useLanguage } from '../../i18n/LanguageContext';
 import type { AspectRatio, Resolution, VariationCount } from '../../types';
 import styles from './SettingsPanel.module.css';
 
@@ -24,11 +25,12 @@ const variations: { value: VariationCount; label: string }[] = [
 
 export function SettingsPanel() {
   const { state, dispatch } = useWizard();
+  const { t } = useLanguage();
 
   return (
     <div className={styles.panel}>
       <div className={styles.group}>
-        <span className={styles.label}>Ratio</span>
+        <span className={styles.label}>{t.stepFlowSelect.settings.ratio}</span>
         <div className={styles.options}>
           {aspectRatios.map((ar) => (
             <button
@@ -50,7 +52,7 @@ export function SettingsPanel() {
       <div className={styles.divider} />
 
       <div className={styles.group}>
-        <span className={styles.label}>Resolution</span>
+        <span className={styles.label}>{t.stepFlowSelect.settings.resolution}</span>
         <div className={styles.options}>
           {resolutions.map((res) => (
             <button
@@ -72,7 +74,7 @@ export function SettingsPanel() {
       <div className={styles.divider} />
 
       <div className={styles.group}>
-        <span className={styles.label}>Variations</span>
+        <span className={styles.label}>{t.stepFlowSelect.settings.variations}</span>
         <div className={styles.options}>
           {variations.map((v) => (
             <button

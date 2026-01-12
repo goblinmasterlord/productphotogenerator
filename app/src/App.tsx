@@ -1,4 +1,5 @@
 import { WizardProvider, useWizard } from './hooks/useWizard';
+import { LanguageProvider } from './i18n/LanguageContext';
 import { TopBar } from './components/layout/TopBar';
 import { StepUpload } from './components/wizard/StepUpload';
 import { StepFlowSelect } from './components/wizard/StepFlowSelect';
@@ -41,14 +42,16 @@ function WizardContent() {
 
 function App() {
   return (
-    <WizardProvider>
-      <div className="app-layout">
-        <TopBar />
-        <main className="main-content">
-          <WizardContent />
-        </main>
-      </div>
-    </WizardProvider>
+    <LanguageProvider>
+      <WizardProvider>
+        <div className="app-layout">
+          <TopBar />
+          <main className="main-content">
+            <WizardContent />
+          </main>
+        </div>
+      </WizardProvider>
+    </LanguageProvider>
   );
 }
 

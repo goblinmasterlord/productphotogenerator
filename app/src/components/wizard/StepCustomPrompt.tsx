@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useWizard } from '../../hooks/useWizard';
+import { useLanguage } from '../../i18n/LanguageContext';
 import { Button } from '../ui/Button';
 import { FloatingActionBar } from '../layout/FloatingActionBar';
 import { optimizePrompt } from '../../services/promptOptimizer';
@@ -7,6 +8,7 @@ import styles from './WizardSteps.module.css';
 
 export function StepCustomPrompt() {
   const { state, dispatch, prevStep, canProceed } = useWizard();
+  const { t } = useLanguage();
   const [isOptimizing, setIsOptimizing] = useState(false);
 
   const handlePromptChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -25,7 +27,7 @@ export function StepCustomPrompt() {
       console.error('Failed to optimize prompt:', error);
       dispatch({
         type: 'SET_ERROR',
-        payload: 'Failed to optimize prompt. Please try again.',
+        payload: t.common.errors.optimizeFailed,
       });
     } finally {
       setIsOptimizing(false);
@@ -46,8 +48,8 @@ export function StepCustomPrompt() {
   return (
     <div className={styles.step}>
       <div className={styles.header}>
-        <h2>Custom Prompt</h2>
-        <p>Write your own prompt or use AI to optimize it</p>
+        <h2>{t.stepCustomPrompt.title}</h2>
+        <p>{t.stepCustomPrompt.subtitle}</p>
       </div>
 
       <div className={styles.promptContainer}>
@@ -55,7 +57,7 @@ export function StepCustomPrompt() {
           className={styles.promptTextarea}
           value={state.customPrompt}
           onChange={handlePromptChange}
-          placeholder="Describe the creative you want to generate...&#10;&#10;Example: Create a luxurious product shot with soft lighting, floating on a bed of rose petals with morning dew droplets..."
+          placeholder={t.stepCustomPrompt.placeholder}
         />
 
         <div className={styles.promptActions}>
@@ -65,7 +67,7 @@ export function StepCustomPrompt() {
             isLoading={isOptimizing}
             disabled={!state.customPrompt.trim()}
           >
-            Optimize with AI
+            {t.stepCustomPrompt.optimizeBtn}
           </Button>
         </div>
 
@@ -84,19 +86,19 @@ export function StepCustomPrompt() {
               >
                 <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
               </svg>
-              Optimized Prompt
+              {t.stepCustomPrompt.optimizedLabel}
             </div>
             <p className={styles.optimizedText}>{state.optimizedPrompt}</p>
             <div className={styles.optimizedActions}>
               <Button size="sm" onClick={handleUseOptimized}>
-                Use This
+                {t.stepCustomPrompt.useThis}
               </Button>
               <Button
                 size="sm"
                 variant="ghost"
                 onClick={() => dispatch({ type: 'SET_OPTIMIZED_PROMPT', payload: null })}
               >
-                Dismiss
+                {t.stepCustomPrompt.dismiss}
               </Button>
             </div>
           </div>
@@ -111,10 +113,10 @@ export function StepCustomPrompt() {
 
       <FloatingActionBar>
         <Button variant="ghost" onClick={prevStep}>
-          Back
+          {t.stepCustomPrompt.back}
         </Button>
         <Button onClick={handleGenerate} disabled={!canProceed()}>
-          Generate Image
+          {t.stepCustomPrompt.generate}
         </Button>
       </FloatingActionBar>
     </div>

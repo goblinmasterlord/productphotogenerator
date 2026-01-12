@@ -1,4 +1,5 @@
 import { useWizard } from '../../hooks/useWizard';
+import { useLanguage } from '../../i18n/LanguageContext';
 import { Card } from '../ui/Card';
 import { Button } from '../ui/Button';
 import { SettingsPanel } from '../ui/SettingsPanel';
@@ -9,33 +10,24 @@ import styles from './WizardSteps.module.css';
 interface FlowOption {
   type: FlowType;
   icon: string;
-  title: string;
-  description: string;
 }
 
-const flowOptions: FlowOption[] = [
-  {
-    type: 'grid',
-    icon: '🎯',
-    title: 'Full Grid',
-    description: 'Generate all 9 concepts in a 3x3 grid',
-  },
-  {
-    type: 'individual',
-    icon: '✨',
-    title: 'Pick & Choose',
-    description: 'Select specific concepts to generate',
-  },
-  {
-    type: 'custom',
-    icon: '✏️',
-    title: 'Custom Prompt',
-    description: 'Write your own prompt',
-  },
+const flowOptionIcons: FlowOption[] = [
+  { type: 'grid', icon: '🎯' },
+  { type: 'individual', icon: '✨' },
+  { type: 'custom', icon: '✏️' },
 ];
 
 export function StepFlowSelect() {
   const { state, dispatch, nextStep, prevStep, canProceed } = useWizard();
+  const { t } = useLanguage();
+
+  const flowOptions = flowOptionIcons.map(({ type, icon }) => ({
+    type,
+    icon,
+    title: t.stepFlowSelect.flows[type].title,
+    description: t.stepFlowSelect.flows[type].description,
+  }));
 
   const handleSelectFlow = (type: FlowType) => {
     dispatch({ type: 'SET_FLOW', payload: type });
@@ -44,8 +36,8 @@ export function StepFlowSelect() {
   return (
     <div className={styles.step}>
       <div className={styles.header}>
-        <h2>Choose Your Flow</h2>
-        <p>Select generation mode and configure settings</p>
+        <h2>{t.stepFlowSelect.title}</h2>
+        <p>{t.stepFlowSelect.subtitle}</p>
       </div>
 
       <SettingsPanel />
@@ -67,10 +59,10 @@ export function StepFlowSelect() {
 
       <FloatingActionBar>
         <Button variant="ghost" onClick={prevStep}>
-          Back
+          {t.stepFlowSelect.back}
         </Button>
         <Button onClick={nextStep} disabled={!canProceed()}>
-          Continue
+          {t.stepFlowSelect.continue}
         </Button>
       </FloatingActionBar>
     </div>

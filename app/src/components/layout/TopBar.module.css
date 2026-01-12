@@ -21,18 +21,38 @@
   margin: 0 auto;
 }
 
-/* Logo */
+/* Logo - clickable button */
 .logo {
   display: flex;
   align-items: center;
   gap: 6px;
   flex-shrink: 0;
+  background: none;
+  border: none;
+  padding: 4px 8px;
+  margin: -4px -8px;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.logo:hover {
+  background: rgba(232, 180, 160, 0.1);
+}
+
+.logo:active {
+  transform: scale(0.98);
 }
 
 .logoImg {
   width: 28px;
   height: 28px;
   object-fit: contain;
+  transition: transform var(--transition-fast);
+}
+
+.logo:hover .logoImg {
+  transform: scale(1.05);
 }
 
 .logoText {
@@ -72,7 +92,7 @@
   gap: 6px;
   padding: 4px 10px;
   border-radius: var(--radius-full);
-  transition: all var(--transition-fast);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .stepNum {
@@ -86,14 +106,17 @@
   background: var(--color-border);
   color: var(--color-muted);
   border-radius: 50%;
-  transition: all var(--transition-fast);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .stepLabel {
   font-size: 0.75rem;
   font-weight: 500;
   color: var(--color-muted);
-  transition: color var(--transition-fast);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  white-space: nowrap;
+  overflow: hidden;
+  max-width: 100px;
 }
 
 .connector {
@@ -102,7 +125,8 @@
   background: var(--color-border);
   margin: 0 4px;
   border-radius: var(--radius-full);
-  transition: background var(--transition-fast);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-origin: left center;
 }
 
 .connectorDone {
@@ -133,6 +157,40 @@
 
 .stepCompleted .stepLabel {
   color: var(--color-text-light);
+}
+
+/* Language Selector */
+.languageSelector {
+  display: flex;
+  gap: 4px;
+  padding: 3px;
+  background: var(--color-bg-alt);
+  border-radius: var(--radius-full);
+  flex-shrink: 0;
+}
+
+.langBtn {
+  padding: 4px 10px;
+  font-family: var(--font-body);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: var(--color-muted);
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  letter-spacing: 0.02em;
+}
+
+.langBtn:hover {
+  color: var(--color-text);
+}
+
+.langBtnActive {
+  background: var(--color-white);
+  color: var(--color-primary);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 }
 
 /* Resources */

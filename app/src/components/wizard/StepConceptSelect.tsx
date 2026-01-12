@@ -1,12 +1,16 @@
 import { useWizard } from '../../hooks/useWizard';
+import { useLanguage } from '../../i18n/LanguageContext';
 import { Card } from '../ui/Card';
 import { Button } from '../ui/Button';
 import { FloatingActionBar } from '../layout/FloatingActionBar';
-import { CONCEPTS } from '../../constants/concepts';
+import { getConcepts } from '../../constants/concepts';
 import styles from './WizardSteps.module.css';
 
 export function StepConceptSelect() {
   const { state, dispatch, prevStep, canProceed } = useWizard();
+  const { t } = useLanguage();
+
+  const concepts = getConcepts(t);
 
   const handleToggleConcept = (conceptId: number) => {
     dispatch({ type: 'TOGGLE_CONCEPT', payload: conceptId });
@@ -19,12 +23,12 @@ export function StepConceptSelect() {
   return (
     <div className={styles.step}>
       <div className={styles.header}>
-        <h2>Select Concepts</h2>
-        <p>Choose which creative concepts to generate for your product</p>
+        <h2>{t.stepConceptSelect.title}</h2>
+        <p>{t.stepConceptSelect.subtitle}</p>
       </div>
 
       <div className={styles.conceptGrid}>
-        {CONCEPTS.map((concept) => (
+        {concepts.map((concept) => (
           <Card
             key={concept.id}
             variant={state.selectedConcepts.includes(concept.id) ? 'selected' : 'interactive'}
@@ -41,18 +45,19 @@ export function StepConceptSelect() {
 
       {state.selectedConcepts.length > 0 && (
         <p className={styles.selectedCount}>
-          <strong>{state.selectedConcepts.length}</strong> concept
-          {state.selectedConcepts.length !== 1 ? 's' : ''} selected
+          <strong>{state.selectedConcepts.length}</strong>{' '}
+          {state.selectedConcepts.length === 1
+            ? t.stepConceptSelect.selectedCount.single
+            : t.stepConceptSelect.selectedCount.plural}
         </p>
       )}
 
       <FloatingActionBar>
         <Button variant="ghost" onClick={prevStep}>
-          Back
+          {t.stepConceptSelect.back}
         </Button>
         <Button onClick={handleGenerate} disabled={!canProceed()}>
-          Generate {state.selectedConcepts.length} Image
-          {state.selectedConcepts.length !== 1 ? 's' : ''}
+          {t.stepConceptSelect.generate} {state.selectedConcepts.length}
         </Button>
       </FloatingActionBar>
     </div>

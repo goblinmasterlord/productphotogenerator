@@ -1,4 +1,5 @@
 import { useCallback, useRef, useState } from 'react';
+import { useLanguage } from '../../i18n/LanguageContext';
 import styles from './ImageUploader.module.css';
 
 interface ImageUploaderProps {
@@ -12,13 +13,14 @@ export function ImageUploader({
   onImageSelect,
   onImageClear,
 }: ImageUploaderProps) {
+  const { t } = useLanguage();
   const [isDragging, setIsDragging] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const handleFile = useCallback(
     (file: File) => {
       if (!file.type.startsWith('image/')) {
-        alert('Please upload an image file');
+        alert(t.common.errors.uploadImageFile);
         return;
       }
 
@@ -29,7 +31,7 @@ export function ImageUploader({
       };
       reader.readAsDataURL(file);
     },
-    [onImageSelect]
+    [onImageSelect, t.common.errors.uploadImageFile]
   );
 
   const handleDrop = useCallback(
@@ -92,7 +94,7 @@ export function ImageUploader({
             </svg>
           </button>
         </div>
-        <p className={styles.previewHint}>Click the X to upload a different image</p>
+        <p className={styles.previewHint}>{t.stepUpload.dropzone.previewHint}</p>
       </div>
     );
   }
@@ -132,9 +134,9 @@ export function ImageUploader({
             <polyline points="21 15 16 10 5 21" />
           </svg>
         </div>
-        <p className={styles.title}>Drop your product image here</p>
-        <p className={styles.subtitle}>or click to browse</p>
-        <p className={styles.formats}>Supports JPG, PNG, WebP</p>
+        <p className={styles.title}>{t.stepUpload.dropzone.title}</p>
+        <p className={styles.subtitle}>{t.stepUpload.dropzone.subtitle}</p>
+        <p className={styles.formats}>{t.stepUpload.dropzone.formats}</p>
       </div>
     </div>
   );
