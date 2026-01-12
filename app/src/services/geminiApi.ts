@@ -1,7 +1,7 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import { GRID_PROMPT, INDIVIDUAL_PROMPT_TEMPLATE } from '../constants/prompts';
+import { GRID_PROMPT, INDIVIDUAL_PROMPT_TEMPLATE, MACRO_SET_PROMPTS, MACRO_SET_BASE_RULES } from '../constants/prompts';
 import { CONCEPT_DATA } from '../constants/concepts';
-import type { GeneratedImage, GenerationSettings } from '../types';
+import type { GeneratedImage, GenerationSettings, UsageMetadata } from '../types';
 
 const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
 
@@ -30,23 +30,42 @@ async function fileToGenerativePart(file: File): Promise<{
   });
 }
 
-function extractImageFromResponse(response: any): string | null {
+interface ExtractedResponse {
+  imageData: string | null;
+  usage: UsageMetadata | null;
+}
+
+function extractImageFromResponse(response: any): ExtractedResponse {
+  const result: ExtractedResponse = { imageData: null, usage: null };
+
   try {
+    // Extract usage metadata
+    const usageMetadata = response.response?.usageMetadata;
+    if (usageMetadata) {
+      result.usage = {
+        promptTokenCount: usageMetadata.promptTokenCount || 0,
+        candidatesTokenCount: usageMetadata.candidatesTokenCount || 0,
+        totalTokenCount: usageMetadata.totalTokenCount || 0,
+      };
+    }
+
+    // Extract image
     const candidates = response.response?.candidates;
-    if (!candidates || candidates.length === 0) return null;
+    if (!candidates || candidates.length === 0) return result;
 
     const parts = candidates[0]?.content?.parts;
-    if (!parts) return null;
+    if (!parts) return result;
 
     for (const part of parts) {
       if (part.inlineData?.data) {
-        return part.inlineData.data;
+        result.imageData = part.inlineData.data;
+        break;
       }
     }
-    return null;
+    return result;
   } catch (error) {
     console.error('Error extracting image from response:', error);
-    return null;
+    return result;
   }
 }
 
@@ -84,7 +103,7 @@ export async function generateGrid(
 
   const result = await model.generateContent([fullPrompt, imagePart]);
 
-  const imageData = extractImageFromResponse(result);
+  const { imageData, usage } = extractImageFromResponse(result);
 
   if (!imageData) {
     throw new Error('No image was generated. Please try again.');
@@ -94,6 +113,7 @@ export async function generateGrid(
     id: crypto.randomUUID(),
     imageData,
     prompt: fullPrompt,
+    usage: usage || undefined,
   };
 }
 
@@ -126,7 +146,7 @@ export async function generateConcept(
 
   const result = await model.generateContent([fullPrompt, imagePart]);
 
-  const imageData = extractImageFromResponse(result);
+  const { imageData, usage } = extractImageFromResponse(result);
 
   if (!imageData) {
     throw new Error(`Failed to generate concept. Please try again.`);
@@ -138,6 +158,7 @@ export async function generateConcept(
     conceptName: conceptName || `Concept ${concept.id}`,
     imageData,
     prompt: fullPrompt,
+    usage: usage || undefined,
   };
 }
 
@@ -171,7 +192,7 @@ Visual Rules:
 
   const result = await model.generateContent([fullPrompt, imagePart]);
 
-  const imageData = extractImageFromResponse(result);
+  const { imageData, usage } = extractImageFromResponse(result);
 
   if (!imageData) {
     throw new Error('Failed to generate image. Please try again.');
@@ -181,5 +202,46 @@ Visual Rules:
     id: crypto.randomUUID(),
     imageData,
     prompt,
+    usage: usage || undefined,
   };
 }
+
+export async function generateMacroSetImage(
+  image: File,
+  macroIndex: number,
+  settings: GenerationSettings
+): Promise<GeneratedImage> {
+  const macroPrompt = MACRO_SET_PROMPTS[macroIndex];
+  if (!macroPrompt) {
+    throw new Error(`Macro prompt with index ${macroIndex} not found`);
+  }
+
+  const model = genAI.getGenerativeModel({
+    model: 'gemini-3-pro-image-preview',
+    generationConfig: {
+      responseModalities: ['Text', 'Image'],
+    } as any,
+  });
+
+  const imagePart = await fileToGenerativePart(image);
+  const settingsPrompt = buildSettingsPrompt(settings);
+  const fullPrompt = `${macroPrompt.prompt}${MACRO_SET_BASE_RULES}${settingsPrompt}`;
+
+  const result = await model.generateContent([fullPrompt, imagePart]);
+
+  const { imageData, usage } = extractImageFromResponse(result);
+
+  if (!imageData) {
+    throw new Error(`Failed to generate macro image. Please try again.`);
+  }
+
+  return {
+    id: crypto.randomUUID(),
+    conceptName: macroPrompt.name,
+    imageData,
+    prompt: fullPrompt,
+    usage: usage || undefined,
+  };
+}
+
+export { MACRO_SET_PROMPTS };

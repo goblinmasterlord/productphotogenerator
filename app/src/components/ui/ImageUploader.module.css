@@ -2,13 +2,18 @@
   border: 2px dashed var(--color-border);
   border-radius: var(--radius-xl);
   padding: var(--space-2xl) var(--space-xl);
+  min-height: 280px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   text-align: center;
   cursor: pointer;
   transition: all var(--transition-normal);
   background-color: var(--color-white);
   position: relative;
   overflow: hidden;
-  max-width: 600px;
+  width: 100%;
+  max-width: 560px;
   margin: 0 auto;
 }
 

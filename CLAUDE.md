@@ -28,26 +28,28 @@ VITE_GEMINI_API_KEY=your_google_generative_ai_key
 ### Wizard Flow Pattern
 The app implements a 4-step wizard: **Upload → Flow Select → Configure → Results**
 
-- **Upload**: User uploads product image
-- **Flow Select**: Choose generation mode (Grid/Individual/Custom) + settings (aspect ratio, resolution, variations)
-- **Configure**: Select concepts (Individual) or write prompt (Custom). Grid flow skips this step.
-- **Results**: Display generated images with download options
+- **Upload**: User uploads product image (includes tips section for best results)
+- **Flow Select**: Choose generation mode (Grid/Individual/Macro Set/Custom) + settings (aspect ratio, resolution, variations)
+- **Configure**: Select concepts (Individual) or write prompt (Custom). Grid and Macro Set flows skip this step.
+- **Results**: Display generated images with download options and cost summary
 
 ### State Management
 `useWizard` hook uses React Context + useReducer for centralized state:
 - Current step, uploaded image, selected flow, concepts, prompts
 - Generation settings (aspectRatio, resolution, variations)
 - Generated images array, loading/error states
+- Session costs tracking (input/output tokens, image count, estimated USD cost)
 
 ### Generation Flows
-Three distinct flows handled by `useGemini` hook:
+Four distinct flows handled by `useGemini` hook:
 1. **Grid**: Generates 3x3 grid image with all 9 concepts
 2. **Individual**: Generates selected concepts one-by-one (uses `getConcepts()` from `constants/concepts.ts`)
-3. **Custom**: User writes their own prompt (optionally optimized via `promptOptimizer` service)
+3. **Macro Set**: Generates 4 different macro close-up shots (Ultra Detail, Logo & Branding, Form & Silhouette, Material Study)
+4. **Custom**: User writes their own prompt (optionally optimized via `promptOptimizer` service)
 
 ### Services
-- `geminiApi.ts`: Direct Gemini API integration (generateGrid, generateConcept, generateCustom)
-- `promptOptimizer.ts`: Uses Gemini 2.0 Flash to enhance user prompts
+- `geminiApi.ts`: Direct Gemini API integration (generateGrid, generateConcept, generateCustom, generateMacroSetImage)
+- `promptOptimizer.ts`: Uses Gemini 3 Flash (`gemini-3-flash-preview`) to enhance user prompts
 
 ### Localization (i18n)
 The app supports **Hungarian (default)** and **English**. Language preference is persisted in localStorage.
@@ -97,7 +99,7 @@ components/
 | `src/hooks/useGemini.ts` | Image generation orchestration |
 | `src/services/geminiApi.ts` | Gemini API calls |
 | `src/constants/concepts.ts` | 9 creative concepts (`CONCEPT_DATA` + `getConcepts()` for i18n) |
-| `src/constants/prompts.ts` | Grid generation prompt template |
+| `src/constants/prompts.ts` | Grid, Macro Set, and optimizer prompt templates |
 | `src/types/index.ts` | All TypeScript types |
 | `src/i18n/translations.ts` | All UI strings (Hungarian + English) |
 | `src/i18n/LanguageContext.tsx` | Language state management Context |
@@ -105,7 +107,7 @@ components/
 ## Key Types
 
 ```typescript
-type FlowType = 'grid' | 'individual' | 'custom'
+type FlowType = 'grid' | 'individual' | 'custom' | 'macroSet'
 type WizardStep = 'upload' | 'flow' | 'configure' | 'results'
 type AspectRatio = 'auto' | '1:1' | '3:4' | '4:3' | '16:9' | '9:16'
 type Resolution = '1k' | '2k' | '4k'

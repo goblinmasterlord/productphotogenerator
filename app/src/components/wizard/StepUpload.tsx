@@ -3,7 +3,7 @@ import { useLanguage } from '../../i18n/LanguageContext';
 import { ImageUploader } from '../ui/ImageUploader';
 import { Button } from '../ui/Button';
 import { FloatingActionBar } from '../layout/FloatingActionBar';
-import styles from './WizardSteps.module.css';
+import styles from './StepUpload.module.css';
 
 export function StepUpload() {
   const { state, dispatch, nextStep, canProceed } = useWizard();
@@ -24,11 +24,37 @@ export function StepUpload() {
         <p>{t.stepUpload.subtitle}</p>
       </div>
 
-      <ImageUploader
-        preview={state.imagePreview}
-        onImageSelect={handleImageSelect}
-        onImageClear={handleImageClear}
-      />
+      <div className={styles.content}>
+        <ImageUploader
+          preview={state.imagePreview}
+          onImageSelect={handleImageSelect}
+          onImageClear={handleImageClear}
+        />
+
+        {!state.imagePreview && (
+          <div className={styles.tipsSection}>
+            <h3 className={styles.tipsTitle}>{t.stepUpload.tips.title}</h3>
+            <div className={styles.tipsGrid}>
+              <div className={styles.tip}>
+                <span className={styles.tipIcon}>📸</span>
+                <span>{t.stepUpload.tips.highQuality}</span>
+              </div>
+              <div className={styles.tip}>
+                <span className={styles.tipIcon}>🎯</span>
+                <span>{t.stepUpload.tips.centered}</span>
+              </div>
+              <div className={styles.tip}>
+                <span className={styles.tipIcon}>💡</span>
+                <span>{t.stepUpload.tips.lighting}</span>
+              </div>
+              <div className={styles.tip}>
+                <span className={styles.tipIcon}>🖼️</span>
+                <span>{t.stepUpload.tips.background}</span>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
 
       <FloatingActionBar>
         <Button

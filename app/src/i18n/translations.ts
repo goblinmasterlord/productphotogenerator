@@ -27,6 +27,13 @@ export interface Translations {
       formats: string;
       previewHint: string;
     };
+    tips: {
+      title: string;
+      highQuality: string;
+      centered: string;
+      lighting: string;
+      background: string;
+    };
     continue: string;
   };
 
@@ -44,6 +51,10 @@ export interface Translations {
         description: string;
       };
       custom: {
+        title: string;
+        description: string;
+      };
+      macroSet: {
         title: string;
         description: string;
       };
@@ -137,6 +148,11 @@ export interface Translations {
       single: string;
       plural: string;
     };
+    cost: {
+      estimated: string;
+      image: string;
+      images: string;
+    };
     actions: {
       generateMore: string;
       downloadAll: string;
@@ -181,6 +197,13 @@ export const translations: Record<Language, Translations> = {
         formats: 'JPG, PNG, WebP támogatott',
         previewHint: 'Kattints az X-re másik kép feltöltéséhez',
       },
+      tips: {
+        title: 'Tippek a legjobb eredményhez',
+        highQuality: 'Nagy felbontású, éles kép',
+        centered: 'Termék középen, jól látható',
+        lighting: 'Egyenletes, lágy megvilágítás',
+        background: 'Tiszta, egyszínű háttér',
+      },
       continue: 'Tovább',
     },
 
@@ -199,6 +222,10 @@ export const translations: Record<Language, Translations> = {
         custom: {
           title: 'Saját prompt',
           description: 'Írd meg a saját instrukciód',
+        },
+        macroSet: {
+          title: 'Makró szett',
+          description: '4 különböző közeli felvétel a termékről',
         },
       },
       settings: {
@@ -287,6 +314,11 @@ export const translations: Record<Language, Translations> = {
         single: 'kép generálva',
         plural: 'kép generálva',
       },
+      cost: {
+        estimated: 'Becsült költség',
+        image: 'kép',
+        images: 'kép',
+      },
       actions: {
         generateMore: 'Több generálása',
         downloadAll: 'Összes letöltése',
@@ -329,6 +361,13 @@ export const translations: Record<Language, Translations> = {
         formats: 'Supports JPG, PNG, WebP',
         previewHint: 'Click the X to upload a different image',
       },
+      tips: {
+        title: 'Tips for best results',
+        highQuality: 'High resolution, sharp image',
+        centered: 'Product centered and visible',
+        lighting: 'Even, soft lighting',
+        background: 'Clean, solid background',
+      },
       continue: 'Continue',
     },
 
@@ -347,6 +386,10 @@ export const translations: Record<Language, Translations> = {
         custom: {
           title: 'Custom Prompt',
           description: 'Write your own prompt',
+        },
+        macroSet: {
+          title: 'Macro Set',
+          description: '4 different close-up shots of your product',
         },
       },
       settings: {
@@ -434,6 +477,11 @@ export const translations: Record<Language, Translations> = {
       generated: {
         single: 'image generated',
         plural: 'images generated',
+      },
+      cost: {
+        estimated: 'Est. cost',
+        image: 'image',
+        images: 'images',
       },
       actions: {
         generateMore: 'Generate More',

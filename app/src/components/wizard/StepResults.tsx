@@ -5,7 +5,7 @@ import { useGemini } from '../../hooks/useGemini';
 import { Button } from '../ui/Button';
 import { Lightbox } from '../ui/Lightbox';
 import { FloatingActionBar } from '../layout/FloatingActionBar';
-import type { GeneratedImage } from '../../types';
+import type { GeneratedImage, UsageMetadata } from '../../types';
 import styles from './StepResults.module.css';
 
 export function StepResults() {
@@ -21,6 +21,13 @@ export function StepResults() {
     [dispatch]
   );
 
+  const handleUsage = useCallback(
+    (usage: UsageMetadata) => {
+      dispatch({ type: 'ADD_USAGE', payload: usage });
+    },
+    [dispatch]
+  );
+
   const handleError = useCallback(
     (error: string) => {
       dispatch({ type: 'SET_ERROR', payload: error });
@@ -30,6 +37,7 @@ export function StepResults() {
 
   const { generate, isGenerating, progress } = useGemini({
     onImageGenerated: handleImageGenerated,
+    onUsage: handleUsage,
     onError: handleError,
     translations: t,
   });
@@ -81,7 +89,7 @@ export function StepResults() {
     dispatch({ type: 'SET_GENERATED_IMAGES', payload: [] });
     dispatch({ type: 'SET_ERROR', payload: null });
     hasStartedRef.current = false;
-    if (state.selectedFlow === 'grid') {
+    if (state.selectedFlow === 'grid' || state.selectedFlow === 'macroSet') {
       dispatch({ type: 'SET_STEP', payload: 'flow' });
     } else {
       dispatch({ type: 'SET_STEP', payload: 'configure' });
@@ -92,7 +100,9 @@ export function StepResults() {
     ? 9 * (state.settings.variations || 1)
     : state.selectedFlow === 'individual'
       ? state.selectedConcepts.length * (state.settings.variations || 1)
-      : state.settings.variations || 1;
+      : state.selectedFlow === 'macroSet'
+        ? 4 // 4 macro images in the set
+        : state.settings.variations || 1;
 
   // Error state with no images
   if (state.error && state.generatedImages.length === 0 && !isGenerating) {
@@ -145,6 +155,19 @@ export function StepResults() {
             </>
           )}
         </p>
+
+        {/* Cost Summary */}
+        {!isGenerating && state.sessionCosts.imageCount > 0 && (
+          <div className={styles.costSummary}>
+            <span className={styles.costIcon}>⚡</span>
+            <span className={styles.costText}>
+              {t.stepResults.cost.estimated}: ~${state.sessionCosts.estimatedCost.toFixed(2)}
+            </span>
+            <span className={styles.costDetails}>
+              ({state.sessionCosts.imageCount} {state.sessionCosts.imageCount === 1 ? t.stepResults.cost.image : t.stepResults.cost.images})
+            </span>
+          </div>
+        )}
       </div>
 
       {state.error && state.generatedImages.length > 0 && (
@@ -155,7 +178,10 @@ export function StepResults() {
       )}
 
       {/* Gallery Grid */}
-      <div className={styles.gallery}>
+      <div
+        className={styles.gallery}
+        data-aspect-ratio={state.settings.aspectRatio}
+      >
         {state.generatedImages.map((image, index) => (
           <div
             key={image.id}

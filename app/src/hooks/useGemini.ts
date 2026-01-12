@@ -1,11 +1,12 @@
 import { useState, useCallback } from 'react';
-import { generateGrid, generateConcept, generateCustom } from '../services/geminiApi';
+import { generateGrid, generateConcept, generateCustom, generateMacroSetImage, MACRO_SET_PROMPTS } from '../services/geminiApi';
 import { getConcepts } from '../constants/concepts';
-import type { GeneratedImage, FlowType, GenerationSettings } from '../types';
+import type { GeneratedImage, FlowType, GenerationSettings, UsageMetadata } from '../types';
 import type { Translations } from '../i18n/translations';
 
 interface UseGeminiOptions {
   onImageGenerated?: (image: GeneratedImage) => void;
+  onUsage?: (usage: UsageMetadata) => void;
   onComplete?: () => void;
   onError?: (error: string) => void;
   translations?: Translations;
@@ -37,6 +38,7 @@ export function useGemini(options: UseGeminiOptions = {}) {
               const result = await generateGrid(image, settings);
               results.push(result);
               options.onImageGenerated?.(result);
+              if (result.usage) options.onUsage?.(result.usage);
               setProgress({ current: v + 1, total, currentConcept: variationCount > 1 ? `Grid ${v + 1}` : '' });
             } catch (error) {
               console.error(`Failed to generate grid variation ${v + 1}:`, error);
@@ -65,6 +67,7 @@ export function useGemini(options: UseGeminiOptions = {}) {
                 const result = await generateConcept(image, conceptId, settings, conceptName);
                 results.push(result);
                 options.onImageGenerated?.(result);
+                if (result.usage) options.onUsage?.(result.usage);
               } catch (error) {
                 console.error(`Failed to generate concept ${conceptName} variation ${v + 1}:`, error);
               }
@@ -81,11 +84,33 @@ export function useGemini(options: UseGeminiOptions = {}) {
               const result = await generateCustom(image, customPrompt, settings);
               results.push(result);
               options.onImageGenerated?.(result);
+              if (result.usage) options.onUsage?.(result.usage);
               setProgress({ current: v + 1, total, currentConcept: variationCount > 1 ? `Variation ${v + 1}` : '' });
             } catch (error) {
               console.error(`Failed to generate custom variation ${v + 1}:`, error);
             }
           }
+        } else if (flow === 'macroSet') {
+          const total = MACRO_SET_PROMPTS.length;
+
+          for (let i = 0; i < MACRO_SET_PROMPTS.length; i++) {
+            const macroPrompt = MACRO_SET_PROMPTS[i];
+            setProgress({
+              current: i,
+              total,
+              currentConcept: macroPrompt.name,
+            });
+
+            try {
+              const result = await generateMacroSetImage(image, i, settings);
+              results.push(result);
+              options.onImageGenerated?.(result);
+              if (result.usage) options.onUsage?.(result.usage);
+            } catch (error) {
+              console.error(`Failed to generate macro image ${macroPrompt.name}:`, error);
+            }
+          }
+          setProgress({ current: total, total, currentConcept: '' });
         }
 
         options.onComplete?.();

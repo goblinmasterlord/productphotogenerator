@@ -1,4 +1,4 @@
-export type FlowType = 'grid' | 'individual' | 'custom';
+export type FlowType = 'grid' | 'individual' | 'custom' | 'macroSet';
 
 export type WizardStep = 'upload' | 'flow' | 'configure' | 'results';
 
@@ -34,6 +34,20 @@ export interface WizardState {
   isLoading: boolean;
   error: string | null;
   settings: GenerationSettings;
+  sessionCosts: SessionCosts;
+}
+
+export interface UsageMetadata {
+  promptTokenCount: number;
+  candidatesTokenCount: number;
+  totalTokenCount: number;
+}
+
+export interface SessionCosts {
+  totalInputTokens: number;
+  totalOutputTokens: number;
+  imageCount: number;
+  estimatedCost: number; // in USD
 }
 
 export interface GeneratedImage {
@@ -42,6 +56,7 @@ export interface GeneratedImage {
   conceptName?: string;
   imageData: string; // base64
   prompt: string;
+  usage?: UsageMetadata;
 }
 
 export type WizardAction =
@@ -57,4 +72,5 @@ export type WizardAction =
   | { type: 'ADD_GENERATED_IMAGE'; payload: GeneratedImage }
   | { type: 'SET_GENERATED_IMAGES'; payload: GeneratedImage[] }
   | { type: 'SET_SETTINGS'; payload: Partial<GenerationSettings> }
+  | { type: 'ADD_USAGE'; payload: UsageMetadata }
   | { type: 'RESET' };

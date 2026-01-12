@@ -88,24 +88,26 @@ export function TopBar() {
           })}
         </div>
 
-        {/* Language Selector */}
-        <div className={styles.languageSelector}>
-          <button
-            className={`${styles.langBtn} ${language === 'hu' ? styles.langBtnActive : ''}`}
-            onClick={() => setLanguage('hu')}
-          >
-            HU
-          </button>
-          <button
-            className={`${styles.langBtn} ${language === 'en' ? styles.langBtnActive : ''}`}
-            onClick={() => setLanguage('en')}
-          >
-            EN
-          </button>
-        </div>
+        {/* Right Section: Language + Resources */}
+        <div className={styles.rightSection}>
+          {/* Language Selector */}
+          <div className={styles.languageSelector}>
+            <button
+              className={`${styles.langBtn} ${language === 'hu' ? styles.langBtnActive : ''}`}
+              onClick={() => setLanguage('hu')}
+            >
+              HU
+            </button>
+            <button
+              className={`${styles.langBtn} ${language === 'en' ? styles.langBtnActive : ''}`}
+              onClick={() => setLanguage('en')}
+            >
+              EN
+            </button>
+          </div>
 
-        {/* Resources */}
-        <div className={styles.resourcesWrapper}>
+          {/* Resources */}
+          <div className={styles.resourcesWrapper}>
           <button
             className={styles.resourcesBtn}
             onClick={() => setShowResources(!showResources)}
@@ -149,6 +151,7 @@ export function TopBar() {
               </div>
             </>
           )}
+        </div>
         </div>
       </div>
     </div>

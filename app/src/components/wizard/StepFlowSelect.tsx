@@ -15,6 +15,7 @@ interface FlowOption {
 const flowOptionIcons: FlowOption[] = [
   { type: 'grid', icon: '🎯' },
   { type: 'individual', icon: '✨' },
+  { type: 'macroSet', icon: '🔍' },
   { type: 'custom', icon: '✏️' },
 ];
 

@@ -62,6 +62,60 @@ High-end commercial campaign
 Designed for brand websites, social grids, and digital billboards
 Hyperreal, cinematic, polished, and aspirational`;
 
+// Macro Set - 4 different macro perspectives of the product
+export const MACRO_SET_PROMPTS = [
+  {
+    name: 'Ultra Detail',
+    prompt: `Create an extreme macro close-up photograph focusing on the most distinctive surface detail or texture of the uploaded product.
+
+Focus on: The most visually interesting texture, material finish, or surface detail (like embossing, grain, label texture, cap threading, or material surface)
+Composition: Fill 80-90% of frame with the detail, abstract composition where the full product shape is not visible
+Depth of field: Ultra-shallow, razor-thin focus plane with beautiful bokeh on surrounding areas`,
+  },
+  {
+    name: 'Logo & Branding',
+    prompt: `Create a macro close-up photograph highlighting the logo, typography, or key branding element of the uploaded product.
+
+Focus on: The product logo, brand name, or most important text/graphic element
+Composition: The branding element should be the clear hero, with some product context visible around it
+Depth of field: Shallow focus on the text/logo with gentle blur on surrounding product surface`,
+  },
+  {
+    name: 'Form & Silhouette',
+    prompt: `Create a medium-close macro photograph showcasing the elegant form, curves, or architectural shape of the uploaded product.
+
+Focus on: The product's distinctive shape, an interesting curve, edge, corner, or structural detail
+Composition: Show enough of the product to appreciate its form while maintaining an intimate macro perspective
+Depth of field: Selective focus that draws attention to the most beautiful curve or edge`,
+  },
+  {
+    name: 'Material Study',
+    prompt: `Create a macro photograph that feels like a material study, emphasizing the tactile quality and craftsmanship of the uploaded product.
+
+Focus on: Where different materials meet, a seam, cap closure, or where the product shows its construction quality
+Composition: Capture a detail that makes viewers want to reach out and touch the product
+Depth of field: Medium-shallow, allowing appreciation of the material's tactile qualities`,
+  },
+];
+
+export const MACRO_SET_BASE_RULES = `
+Visual Rules:
+Product must remain 100% accurate in all visible details - no invention or redesign
+Capture authentic textures, materials, and finishes exactly as they appear
+Maintain true colors and material properties
+
+Lighting & Style:
+Soft, controlled macro studio lighting
+Beautiful specular highlights that reveal surface quality
+High dynamic range, ultra-sharp focus on the focal point
+Editorial luxury advertising aesthetic
+
+Technical Excellence:
+Professional macro photography look
+Studio quality with perfect exposure
+Rich detail and clarity in the focused area
+Hyperreal, cinematic, polished finish`;
+
 export const PROMPT_OPTIMIZER_SYSTEM = `You are an expert prompt engineer specializing in AI image generation. Your task is to optimize user prompts following these golden rules:
 
 1. USE NATURAL LANGUAGE & FULL SENTENCES
