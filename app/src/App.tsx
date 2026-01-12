@@ -1,6 +1,5 @@
 import { WizardProvider, useWizard } from './hooks/useWizard';
-import { Header } from './components/layout/Header';
-import { WizardLayout } from './components/layout/WizardLayout';
+import { TopBar } from './components/layout/TopBar';
 import { StepUpload } from './components/wizard/StepUpload';
 import { StepFlowSelect } from './components/wizard/StepFlowSelect';
 import { StepConceptSelect } from './components/wizard/StepConceptSelect';
@@ -34,18 +33,20 @@ function WizardContent() {
   };
 
   return (
-    <WizardLayout>
+    <div className="wizard-content">
       {renderStep()}
-    </WizardLayout>
+    </div>
   );
 }
 
 function App() {
   return (
     <WizardProvider>
-      <div className="container">
-        <Header />
-        <WizardContent />
+      <div className="app-layout">
+        <TopBar />
+        <main className="main-content">
+          <WizardContent />
+        </main>
       </div>
     </WizardProvider>
   );

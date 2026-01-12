@@ -7,10 +7,15 @@ interface FloatingActionBarProps {
 
 export function FloatingActionBar({ children }: FloatingActionBarProps) {
   return (
-    <div className={styles.container}>
-      <div className={styles.bar}>
-        {children}
+    <>
+      {/* Spacer to prevent content overlap */}
+      <div className={styles.spacer} />
+      {/* Fixed bar */}
+      <div className={styles.container}>
+        <div className={styles.bar}>
+          {children}
+        </div>
       </div>
-    </div>
+    </>
   );
 }

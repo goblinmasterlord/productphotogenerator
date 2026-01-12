@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useWizard } from '../../hooks/useWizard';
 import { Button } from '../ui/Button';
+import { FloatingActionBar } from '../layout/FloatingActionBar';
 import { optimizePrompt } from '../../services/promptOptimizer';
 import styles from './WizardSteps.module.css';
 
@@ -108,14 +109,14 @@ export function StepCustomPrompt() {
         </div>
       )}
 
-      <div className={styles.actionsSpaced}>
+      <FloatingActionBar>
         <Button variant="ghost" onClick={prevStep}>
           Back
         </Button>
         <Button onClick={handleGenerate} disabled={!canProceed()}>
           Generate Image
         </Button>
-      </div>
+      </FloatingActionBar>
     </div>
   );
 }

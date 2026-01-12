@@ -1,0 +1,328 @@
+.container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.header {
+  text-align: center;
+  margin-bottom: var(--space-lg);
+}
+
+.header h2 {
+  margin-bottom: var(--space-xs);
+  font-size: 1.75rem;
+}
+
+.progressText {
+  font-size: 0.9375rem;
+  color: var(--color-text-light);
+}
+
+.progressCount {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--color-primary);
+  font-family: var(--font-display);
+}
+
+.progressDivider {
+  color: var(--color-muted);
+  margin: 0 2px;
+}
+
+.progressLabel {
+  color: var(--color-muted);
+}
+
+.currentConcept {
+  display: block;
+  font-size: 0.875rem;
+  color: var(--color-text-light);
+  margin-top: var(--space-xs);
+  font-style: italic;
+}
+
+/* Warning Banner */
+.warningBanner {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
+  background: rgba(232, 180, 160, 0.15);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-lg);
+  font-size: 0.875rem;
+  color: var(--color-text);
+}
+
+.warningIcon {
+  flex-shrink: 0;
+}
+
+/* Gallery Grid */
+.gallery {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-md);
+  flex: 1;
+  margin-bottom: var(--space-xl);
+}
+
+/* Single item - larger and centered */
+.gallery:has(.galleryItem:only-child) .galleryItem {
+  max-width: 320px;
+}
+
+/* Gallery Item sizing */
+.galleryItem {
+  width: calc(50% - var(--space-md) / 2);
+  max-width: 280px;
+  min-width: 200px;
+}
+
+@media (min-width: 700px) {
+  .galleryItem {
+    width: calc(33.333% - var(--space-md));
+    max-width: 260px;
+  }
+}
+
+@media (min-width: 900px) {
+  .galleryItem {
+    width: calc(25% - var(--space-md));
+    max-width: 240px;
+  }
+}
+
+/* Gallery Item Styling */
+.galleryItem {
+  background: var(--color-white);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+  animation: itemAppear 0.4s ease-out backwards;
+  transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+  flex-shrink: 0;
+}
+
+.galleryItem:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
+
+@keyframes itemAppear {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.imageContainer {
+  position: relative;
+  cursor: pointer;
+  overflow: hidden;
+  line-height: 0; /* Remove extra space below image */
+}
+
+.image {
+  width: 100%;
+  height: auto;
+  display: block;
+  transition: transform var(--transition-slow);
+}
+
+.imageContainer:hover .image {
+  transform: scale(1.05);
+}
+
+.imageHover {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity var(--transition-fast);
+}
+
+.imageContainer:hover .imageHover {
+  opacity: 1;
+}
+
+.expandIcon {
+  font-size: 2rem;
+  color: white;
+  background: rgba(255, 255, 255, 0.2);
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-full);
+  backdrop-filter: blur(4px);
+}
+
+/* Item Info */
+.itemInfo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-sm) var(--space-md);
+  gap: var(--space-sm);
+}
+
+.conceptName {
+  font-family: var(--font-display);
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.downloadBtn {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-bg-alt);
+  border: none;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  font-size: 1rem;
+  color: var(--color-text);
+  transition: all var(--transition-fast);
+}
+
+.downloadBtn:hover {
+  background: var(--color-primary);
+  color: white;
+}
+
+/* Placeholder while loading */
+.placeholder {
+  width: calc(50% - var(--space-md) / 2);
+  max-width: 280px;
+  min-width: 200px;
+  background: var(--color-white);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  animation: placeholderAppear 0.4s ease-out backwards;
+}
+
+@media (min-width: 700px) {
+  .placeholder {
+    width: calc(33.333% - var(--space-md));
+    max-width: 260px;
+  }
+}
+
+@media (min-width: 900px) {
+  .placeholder {
+    width: calc(25% - var(--space-md));
+    max-width: 240px;
+  }
+}
+
+@keyframes placeholderAppear {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.placeholderInner {
+  width: 100%;
+  aspect-ratio: 3/4;
+  background: var(--color-bg-alt);
+  position: relative;
+  overflow: hidden;
+}
+
+.placeholderPulse {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(232, 180, 160, 0.4),
+    transparent
+  );
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* Error State */
+.errorContainer {
+  text-align: center;
+  padding: var(--space-xl);
+  background-color: rgba(212, 114, 106, 0.08);
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(212, 114, 106, 0.2);
+  margin-bottom: var(--space-lg);
+}
+
+.errorText {
+  color: var(--color-error);
+  font-size: 0.9375rem;
+}
+
+/* Generating Status */
+.generatingStatus {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-lg);
+  color: var(--color-text);
+  font-size: 0.9375rem;
+}
+
+.spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--color-border);
+  border-top-color: var(--color-primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

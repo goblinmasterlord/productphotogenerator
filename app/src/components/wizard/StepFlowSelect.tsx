@@ -2,6 +2,7 @@ import { useWizard } from '../../hooks/useWizard';
 import { Card } from '../ui/Card';
 import { Button } from '../ui/Button';
 import { SettingsPanel } from '../ui/SettingsPanel';
+import { FloatingActionBar } from '../layout/FloatingActionBar';
 import type { FlowType } from '../../types';
 import styles from './WizardSteps.module.css';
 
@@ -64,14 +65,14 @@ export function StepFlowSelect() {
         ))}
       </div>
 
-      <div className={styles.actionsSpaced}>
+      <FloatingActionBar>
         <Button variant="ghost" onClick={prevStep}>
           Back
         </Button>
         <Button onClick={nextStep} disabled={!canProceed()}>
           Continue
         </Button>
-      </div>
+      </FloatingActionBar>
     </div>
   );
 }

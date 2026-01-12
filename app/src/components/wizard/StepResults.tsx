@@ -1,17 +1,16 @@
-import { useEffect, useCallback, useState } from 'react';
+import { useEffect, useCallback, useState, useRef } from 'react';
 import { useWizard } from '../../hooks/useWizard';
 import { useGemini } from '../../hooks/useGemini';
-import { Card } from '../ui/Card';
 import { Button } from '../ui/Button';
-import { LoadingScreen } from '../ui/LoadingScreen';
 import { Lightbox } from '../ui/Lightbox';
+import { FloatingActionBar } from '../layout/FloatingActionBar';
 import type { GeneratedImage } from '../../types';
-import styles from './WizardSteps.module.css';
+import styles from './StepResults.module.css';
 
 export function StepResults() {
   const { state, dispatch } = useWizard();
   const [selectedImage, setSelectedImage] = useState<GeneratedImage | null>(null);
-  const [hasStarted, setHasStarted] = useState(false);
+  const hasStartedRef = useRef(false);
 
   const handleImageGenerated = useCallback(
     (image: GeneratedImage) => {
@@ -34,27 +33,25 @@ export function StepResults() {
 
   useEffect(() => {
     // Only generate if we haven't already and have an image
+    // Using ref instead of state to prevent React Strict Mode double-execution
     if (
-      !hasStarted &&
+      !hasStartedRef.current &&
       state.generatedImages.length === 0 &&
       state.uploadedImage &&
       state.selectedFlow &&
       !isGenerating &&
       !state.error
     ) {
-      setHasStarted(true);
-      dispatch({ type: 'SET_LOADING', payload: true });
+      hasStartedRef.current = true;
       generate(
         state.uploadedImage,
         state.selectedFlow,
         state.settings,
         state.selectedConcepts,
         state.customPrompt
-      ).finally(() => {
-        dispatch({ type: 'SET_LOADING', payload: false });
-      });
+      );
     }
-  }, [hasStarted]);
+  }, []);
 
   const handleDownload = (image: GeneratedImage) => {
     const link = document.createElement('a');
@@ -67,6 +64,12 @@ export function StepResults() {
     document.body.removeChild(link);
   };
 
+  const handleDownloadAll = () => {
+    state.generatedImages.forEach((image, index) => {
+      setTimeout(() => handleDownload(image), index * 200);
+    });
+  };
+
   const handleStartOver = () => {
     dispatch({ type: 'RESET' });
   };
@@ -74,7 +77,7 @@ export function StepResults() {
   const handleBack = () => {
     dispatch({ type: 'SET_GENERATED_IMAGES', payload: [] });
     dispatch({ type: 'SET_ERROR', payload: null });
-    setHasStarted(false);
+    hasStartedRef.current = false;
     if (state.selectedFlow === 'grid') {
       dispatch({ type: 'SET_STEP', payload: 'flow' });
     } else {
@@ -82,19 +85,16 @@ export function StepResults() {
     }
   };
 
-  // Loading state
-  if (isGenerating || state.isLoading) {
-    return (
-      <div className={styles.step}>
-        <LoadingScreen progress={progress} />
-      </div>
-    );
-  }
+  const totalExpected = state.selectedFlow === 'grid'
+    ? 9 * (state.settings.variations || 1)
+    : state.selectedFlow === 'individual'
+      ? state.selectedConcepts.length * (state.settings.variations || 1)
+      : state.settings.variations || 1;
 
-  // Error state
-  if (state.error && state.generatedImages.length === 0) {
+  // Error state with no images
+  if (state.error && state.generatedImages.length === 0 && !isGenerating) {
     return (
-      <div className={styles.step}>
+      <div className={styles.container}>
         <div className={styles.header}>
           <h2>Something went wrong</h2>
           <p>We couldn't generate your images</p>
@@ -104,73 +104,124 @@ export function StepResults() {
           <p className={styles.errorText}>{state.error}</p>
         </div>
 
-        <div className={styles.actionsSpaced}>
+        <FloatingActionBar>
           <Button variant="ghost" onClick={handleBack}>
             Go Back
           </Button>
           <Button onClick={handleStartOver}>Start Over</Button>
-        </div>
+        </FloatingActionBar>
       </div>
     );
   }
 
   return (
-    <div className={styles.step}>
+    <div className={styles.container}>
       <div className={styles.header}>
-        <h2>Your Creatives</h2>
-        <p>
-          {state.generatedImages.length} image
-          {state.generatedImages.length !== 1 ? 's' : ''} generated successfully
+        <h2>
+          {isGenerating ? 'Creating Your Creatives' : 'Your Creatives'}
+        </h2>
+        <p className={styles.progressText}>
+          {isGenerating ? (
+            <>
+              <span className={styles.progressCount}>{state.generatedImages.length}</span>
+              <span className={styles.progressDivider}>/</span>
+              <span>{totalExpected}</span>
+              <span className={styles.progressLabel}> images</span>
+              {progress.currentConcept && (
+                <span className={styles.currentConcept}>
+                  — Generating {progress.currentConcept}...
+                </span>
+              )}
+            </>
+          ) : (
+            <>
+              {state.generatedImages.length} image
+              {state.generatedImages.length !== 1 ? 's' : ''} generated
+            </>
+          )}
         </p>
       </div>
 
-      {state.error && (
-        <div className={styles.errorContainer}>
-          <p className={styles.errorText}>
-            Some images failed to generate: {state.error}
-          </p>
+      {state.error && state.generatedImages.length > 0 && (
+        <div className={styles.warningBanner}>
+          <span className={styles.warningIcon}>⚠️</span>
+          <span>Some images failed to generate: {state.error}</span>
         </div>
       )}
 
-      <div className={styles.resultsGrid}>
-        {state.generatedImages.map((image) => (
-          <Card key={image.id} padding="none" className={styles.resultCard}>
+      {/* Gallery Grid */}
+      <div className={styles.gallery}>
+        {state.generatedImages.map((image, index) => (
+          <div
+            key={image.id}
+            className={styles.galleryItem}
+            style={{ animationDelay: `${index * 0.1}s` }}
+          >
             <div
-              className={styles.resultImageWrapper}
+              className={styles.imageContainer}
               onClick={() => setSelectedImage(image)}
             >
               <img
                 src={`data:image/png;base64,${image.imageData}`}
                 alt={image.conceptName || 'Generated creative'}
-                className={styles.resultImage}
+                className={styles.image}
               />
-              <div className={styles.imageOverlay}>
-                <span>Click to enlarge</span>
+              <div className={styles.imageHover}>
+                <span className={styles.expandIcon}>⤢</span>
               </div>
             </div>
-            <div className={styles.resultInfo}>
+            <div className={styles.itemInfo}>
               {image.conceptName && (
-                <h4 className={styles.resultName}>{image.conceptName}</h4>
+                <span className={styles.conceptName}>{image.conceptName}</span>
               )}
-              <Button
-                variant="outline"
-                size="sm"
-                className={styles.downloadButton}
-                onClick={() => handleDownload(image)}
+              <button
+                className={styles.downloadBtn}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleDownload(image);
+                }}
+                title="Download"
               >
-                Download
-              </Button>
+                ↓
+              </button>
             </div>
-          </Card>
+          </div>
+        ))}
+
+        {/* Placeholder slots while generating */}
+        {isGenerating && Array.from({ length: Math.max(0, totalExpected - state.generatedImages.length) }).map((_, i) => (
+          <div key={`placeholder-${i}`} className={styles.placeholder}>
+            <div className={styles.placeholderInner}>
+              <div className={styles.placeholderPulse} />
+            </div>
+          </div>
         ))}
       </div>
 
-      <div className={styles.actionsSpaced}>
-        <Button variant="ghost" onClick={handleBack}>
-          Generate More
-        </Button>
-        <Button onClick={handleStartOver}>Start Over</Button>
-      </div>
+      {/* Floating Action Bar */}
+      <FloatingActionBar>
+        {!isGenerating && (
+          <>
+            <Button variant="ghost" onClick={handleBack}>
+              Generate More
+            </Button>
+            {state.generatedImages.length > 1 && (
+              <Button variant="secondary" onClick={handleDownloadAll}>
+                Download All
+              </Button>
+            )}
+            <Button onClick={handleStartOver}>
+              Start Over
+            </Button>
+          </>
+        )}
+        {isGenerating && (
+          <div className={styles.generatingStatus}>
+            <div className={styles.spinner} />
+            <span>Generating...</span>
+          </div>
+        )}
+      </FloatingActionBar>
 
       {selectedImage && (
         <Lightbox

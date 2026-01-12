@@ -150,7 +150,33 @@ img {
   color: var(--color-white);
 }
 
-/* Utility classes */
+/* App Layout */
+.app-layout {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: var(--space-xl) var(--space-lg);
+  padding-bottom: calc(100px + var(--space-xl)); /* Space for floating action bar */
+}
+
+.wizard-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  min-height: 0;
+}
+
+/* Legacy container */
 .container {
   width: 100%;
   max-width: 1000px;

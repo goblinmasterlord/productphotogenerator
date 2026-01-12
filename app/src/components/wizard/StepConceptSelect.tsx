@@ -1,6 +1,7 @@
 import { useWizard } from '../../hooks/useWizard';
 import { Card } from '../ui/Card';
 import { Button } from '../ui/Button';
+import { FloatingActionBar } from '../layout/FloatingActionBar';
 import { CONCEPTS } from '../../constants/concepts';
 import styles from './WizardSteps.module.css';
 
@@ -45,7 +46,7 @@ export function StepConceptSelect() {
         </p>
       )}
 
-      <div className={styles.actionsSpaced}>
+      <FloatingActionBar>
         <Button variant="ghost" onClick={prevStep}>
           Back
         </Button>
@@ -53,7 +54,7 @@ export function StepConceptSelect() {
           Generate {state.selectedConcepts.length} Image
           {state.selectedConcepts.length !== 1 ? 's' : ''}
         </Button>
-      </div>
+      </FloatingActionBar>
     </div>
   );
 }

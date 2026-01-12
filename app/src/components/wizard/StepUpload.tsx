@@ -1,6 +1,7 @@
 import { useWizard } from '../../hooks/useWizard';
 import { ImageUploader } from '../ui/ImageUploader';
 import { Button } from '../ui/Button';
+import { FloatingActionBar } from '../layout/FloatingActionBar';
 import styles from './WizardSteps.module.css';
 
 export function StepUpload() {
@@ -27,7 +28,7 @@ export function StepUpload() {
         onImageClear={handleImageClear}
       />
 
-      <div className={styles.actions}>
+      <FloatingActionBar>
         <Button
           onClick={nextStep}
           disabled={!canProceed()}
@@ -35,7 +36,7 @@ export function StepUpload() {
         >
           Continue
         </Button>
-      </div>
+      </FloatingActionBar>
     </div>
   );
 }

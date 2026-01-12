@@ -11,10 +11,10 @@ const aspectRatios: { value: AspectRatio; label: string }[] = [
   { value: '9:16', label: '9:16' },
 ];
 
-const resolutions: { value: Resolution; label: string; desc: string }[] = [
-  { value: '1k', label: '1K', desc: 'Fast' },
-  { value: '2k', label: '2K', desc: 'Balanced' },
-  { value: '4k', label: '4K', desc: 'High Quality' },
+const resolutions: { value: Resolution; label: string }[] = [
+  { value: '1k', label: '1K' },
+  { value: '2k', label: '2K' },
+  { value: '4k', label: '4K' },
 ];
 
 const variations: { value: VariationCount; label: string }[] = [
@@ -27,15 +27,15 @@ export function SettingsPanel() {
 
   return (
     <div className={styles.panel}>
-      <div className={styles.setting}>
-        <label className={styles.label}>Aspect Ratio</label>
+      <div className={styles.group}>
+        <span className={styles.label}>Ratio</span>
         <div className={styles.options}>
           {aspectRatios.map((ar) => (
             <button
               key={ar.value}
               type="button"
-              className={`${styles.option} ${
-                state.settings.aspectRatio === ar.value ? styles.selected : ''
+              className={`${styles.btn} ${
+                state.settings.aspectRatio === ar.value ? styles.btnSelected : ''
               }`}
               onClick={() =>
                 dispatch({ type: 'SET_SETTINGS', payload: { aspectRatio: ar.value } })
@@ -47,36 +47,39 @@ export function SettingsPanel() {
         </div>
       </div>
 
-      <div className={styles.setting}>
-        <label className={styles.label}>Resolution</label>
+      <div className={styles.divider} />
+
+      <div className={styles.group}>
+        <span className={styles.label}>Resolution</span>
         <div className={styles.options}>
           {resolutions.map((res) => (
             <button
               key={res.value}
               type="button"
-              className={`${styles.option} ${styles.resOption} ${
-                state.settings.resolution === res.value ? styles.selected : ''
+              className={`${styles.btn} ${
+                state.settings.resolution === res.value ? styles.btnSelected : ''
               }`}
               onClick={() =>
                 dispatch({ type: 'SET_SETTINGS', payload: { resolution: res.value } })
               }
             >
-              <span className={styles.resLabel}>{res.label}</span>
-              <span className={styles.resDesc}>{res.desc}</span>
+              {res.label}
             </button>
           ))}
         </div>
       </div>
 
-      <div className={styles.setting}>
-        <label className={styles.label}>Variations</label>
+      <div className={styles.divider} />
+
+      <div className={styles.group}>
+        <span className={styles.label}>Variations</span>
         <div className={styles.options}>
           {variations.map((v) => (
             <button
               key={v.value}
               type="button"
-              className={`${styles.option} ${
-                state.settings.variations === v.value ? styles.selected : ''
+              className={`${styles.btn} ${
+                state.settings.variations === v.value ? styles.btnSelected : ''
               }`}
               onClick={() =>
                 dispatch({ type: 'SET_SETTINGS', payload: { variations: v.value } })
