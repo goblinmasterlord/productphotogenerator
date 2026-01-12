@@ -1,0 +1,94 @@
+.container {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  padding: var(--space-sm) 0;
+  background: linear-gradient(to bottom, var(--color-bg) 70%, transparent);
+}
+
+.bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
+  padding: var(--space-sm) var(--space-lg);
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  border-radius: var(--radius-full);
+  box-shadow: 0 4px 20px rgba(61, 61, 61, 0.08), 0 0 0 1px rgba(232, 180, 160, 0.15);
+  max-width: fit-content;
+  margin: 0 auto;
+}
+
+.step {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--radius-md);
+  transition: all var(--transition-fast);
+  position: relative;
+}
+
+.icon {
+  font-size: 1rem;
+  opacity: 0.5;
+  transition: all var(--transition-fast);
+}
+
+.label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--color-muted);
+  transition: all var(--transition-fast);
+}
+
+.connector {
+  width: 24px;
+  height: 2px;
+  background-color: var(--color-border);
+  margin: 0 var(--space-xs);
+  border-radius: var(--radius-full);
+  transition: background-color var(--transition-normal);
+}
+
+.connectorDone {
+  background-color: var(--color-primary);
+}
+
+/* Active state */
+.active {
+  background-color: rgba(232, 180, 160, 0.15);
+}
+
+.active .icon {
+  opacity: 1;
+}
+
+.active .label {
+  color: var(--color-text);
+  font-weight: 600;
+}
+
+/* Completed state */
+.completed .icon {
+  opacity: 0.8;
+}
+
+.completed .label {
+  color: var(--color-text-light);
+}
+
+@media (max-width: 500px) {
+  .label {
+    display: none;
+  }
+
+  .step {
+    padding: var(--space-sm);
+  }
+
+  .connector {
+    width: 16px;
+  }
+}
